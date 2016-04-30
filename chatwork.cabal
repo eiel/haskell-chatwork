@@ -17,6 +17,11 @@ library
   hs-source-dirs:      src
   exposed-modules:     Web.ChatWork
   build-depends:       base >= 4.7 && < 5
+                     , bytestring
+                     , http-client
+                     , http-client-tls
+                     , http-types
+                     , case-insensitive
   default-language:    Haskell2010
 
 test-suite chatwork-test
