@@ -1,6 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Web.ChatWork ( baseURL ) where
+module Web.ChatWork (
+  me,
+  getChatWorkTokenFromEnv
+  ) where
 
 import Data.CaseInsensitive
 import Data.ByteString.Char8 as BS
