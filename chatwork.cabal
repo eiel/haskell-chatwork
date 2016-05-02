@@ -18,6 +18,7 @@ library
   exposed-modules:     Web.ChatWork
   build-depends:       base >= 4.7 && < 5
                      , bytestring
+                     , containers
                      , http-client
                      , http-client-tls
                      , http-types
