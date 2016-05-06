@@ -19,26 +19,27 @@ import System.Environment ( lookupEnv )
 data RateLimit = RateLimit {
   limit :: Int,
   remaining :: Int,
-  reset :: Int
+  reset :: Int -- TODO unix time
   } deriving (Show)
 
 me token = get token meURL
 
 meURL = baseURL ++ "/me"
 
-get token path = do
+get token url = do
   manager <- newManager tlsManagerSettings
 
-  initRequest <- parseUrl meURL
+  initRequest <- parseUrl url
   let req = initRequest {
         requestHeaders = [header token]
       }
   res <- httpLbs req manager
   let resHeaders = responseHeaders res
-  return (RateLimit { limit = 1, remaining = 1, reset = 1 }, responseBody res)
+  let rateLimit = readRateLimit resHeaders
+  return (rateLimit, responseBody res)
 
-headerToRateLimit :: RequestHeaders -> Maybe RateLimit
-headerToRateLimit headers = do
+readRateLimit :: RequestHeaders -> Maybe RateLimit
+readRateLimit headers = do
   loo <- lookupInt' "X-RateLimit-Limit"
   rem <- lookupInt' "X-RateLimit-Remaining"
   res <- lookupInt' "X-RateLimit-Reset"
