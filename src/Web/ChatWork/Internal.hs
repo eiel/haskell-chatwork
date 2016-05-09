@@ -5,14 +5,17 @@ module Web.ChatWork.Internal (
   get
   ) where
 
-import Data.ByteString.Char8 as BS
-import Data.CaseInsensitive
+import           Data.Aeson            (Value)
+import           Data.ByteString.Char8 as BS
+import           Data.CaseInsensitive
 import qualified Data.Map as Map
-import Data.Maybe
-import Network.HTTP.Client
-import Network.HTTP.Client.TLS
-import Network.HTTP.Types.Status ( statusCode )
-import Network.HTTP.Types.Header
+import           Data.Maybe
+import           Network.HTTP.Client
+import           Network.HTTP.Client.TLS
+import           Network.HTTP.Types.Status ( statusCode )
+import           Network.HTTP.Types.Header
+import           Network.HTTP.Simple
+
 
 data RateLimit = RateLimit {
   limit :: Int,
@@ -27,10 +30,10 @@ get token url = do
   let req = initRequest {
         requestHeaders = [header token]
       }
-  res <- httpLbs req manager
+  res <- httpJSON req
   let resHeaders = responseHeaders res
   let rateLimit = readRateLimit resHeaders
-  return (rateLimit, responseBody res)
+  return (rateLimit, getResponseBody res :: Value)
 
 header token = ("X-ChatWorkToken", token)
 
