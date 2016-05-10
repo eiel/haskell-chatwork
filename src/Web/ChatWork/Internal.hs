@@ -2,7 +2,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Web.ChatWork.Internal (
-  get
+  get,
+  RateLimit
   ) where
 
 import           Data.Aeson            (Value)
@@ -33,7 +34,7 @@ get token url = do
   res <- httpJSON req
   let resHeaders = responseHeaders res
   let rateLimit = readRateLimit resHeaders
-  return (rateLimit, getResponseBody res :: Value)
+  return (rateLimit, getResponseBody res)
 
 header token = ("X-ChatWorkToken", token)
 
