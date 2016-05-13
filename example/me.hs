@@ -5,4 +5,4 @@ import Control.Monad.IO.Class
 main = runMaybeT $ do
   token <- MaybeT getChatWorkTokenFromEnv
   res <- liftIO . me $ token
-  liftIO . print $ (res :: (Maybe RateLimit, Me))
+  liftIO . print $ snd res

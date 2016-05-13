@@ -40,9 +40,12 @@ data Me = Me {
 
 instance FromJSON Me
 
-meURL = baseURL ++ "/me"
+type ChatWorkAPI a = (Maybe RateLimit, a)
 
+me :: ByteString -> IO (ChatWorkAPI Me)
 me token = get token meURL
+
+meURL = baseURL ++ "/me"
 
 baseURL = "https://api.chatwork.com/v1"
 
