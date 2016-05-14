@@ -4,7 +4,9 @@
 
 module Web.ChatWork (
   me,
-  Me,
+  Me(..),
+  createRoomMessage,
+  CreateMessage(..),
   RateLimit,
   getChatWorkTokenFromEnv
   ) where
@@ -12,6 +14,8 @@ module Web.ChatWork (
 import Data.Aeson
 import Data.ByteString.Char8 as BS
 import Data.Maybe
+import Data.Text
+import Data.Text.Encoding as E
 import GHC.Generics
 import System.Environment ( lookupEnv )
 
@@ -46,6 +50,20 @@ me :: ByteString -> IO (ChatWorkAPI Me)
 me token = get token meURL
 
 meURL = baseURL ++ "/me"
+
+data MessageId = MessageId {
+    message_id :: Int
+  } deriving (Show, Generic)
+instance FromJSON MessageId
+
+data CreateMessage = CreateMessage {
+    body :: Text
+  } deriving (Show, Generic)
+
+createRoomMessage :: ByteString -> Int -> CreateMessage -> IO (ChatWorkAPI MessageId)
+createRoomMessage token roomId request = post token (createMessageURL roomId) [("body", E.encodeUtf8 $ body request)]
+
+createMessageURL room_id = baseURL ++ "/rooms/" ++ show room_id ++ "/messages"
 
 baseURL = "https://api.chatwork.com/v1"
 

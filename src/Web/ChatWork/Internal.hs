@@ -3,6 +3,7 @@
 
 module Web.ChatWork.Internal (
   get,
+  post,
   RateLimit
   ) where
 
@@ -13,10 +14,10 @@ import qualified Data.Map as Map
 import           Data.Maybe
 import           Network.HTTP.Client
 import           Network.HTTP.Client.TLS
-import           Network.HTTP.Types.Status ( statusCode )
 import           Network.HTTP.Types.Header
+import           Network.HTTP.Types.Method
+import           Network.HTTP.Types.Status ( statusCode )
 import           Network.HTTP.Simple
-
 
 data RateLimit = RateLimit {
   limit :: Int,
@@ -25,13 +26,23 @@ data RateLimit = RateLimit {
   } deriving (Show)
 
 get token url = do
-  manager <- newManager tlsManagerSettings
-
   initRequest <- parseUrl url
   let req = initRequest {
+        method = methodGet,
         requestHeaders = [header token]
       }
-  res <- httpJSON req
+  request req
+
+post token url body = do
+  initRequest <- parseUrl url
+  let req = initRequest {
+        method = methodPost,
+        requestHeaders = [header token]
+      }
+  request $ urlEncodedBody body req
+
+request request = do
+  res <- httpJSON request
   let resHeaders = responseHeaders res
   let rateLimit = readRateLimit resHeaders
   return (rateLimit, getResponseBody res)

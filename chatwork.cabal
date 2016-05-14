@@ -25,6 +25,7 @@ library
                      , http-conduit
                      , http-types
                      , case-insensitive
+                     , text
                      , transformers
   default-language:    Haskell2010
 
