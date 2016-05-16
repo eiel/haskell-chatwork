@@ -13,7 +13,6 @@ import           Data.CaseInsensitive
 import qualified Data.Map as Map
 import           Data.Maybe
 import           Network.HTTP.Client
-import           Network.HTTP.Client.TLS
 import           Network.HTTP.Types.Header
 import           Network.HTTP.Types.Method
 import           Network.HTTP.Types.Status ( statusCode )

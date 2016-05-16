@@ -21,7 +21,6 @@ library
                      , bytestring
                      , containers
                      , http-client
-                     , http-client-tls
                      , http-conduit
                      , http-types
                      , case-insensitive
