@@ -7,15 +7,12 @@ module Web.ChatWork.Internal (
   RateLimit
   ) where
 
-import           Data.Aeson            (Value)
 import           Data.ByteString.Char8 as BS
 import           Data.CaseInsensitive
 import qualified Data.Map as Map
-import           Data.Maybe
 import           Network.HTTP.Client
 import           Network.HTTP.Types.Header
 import           Network.HTTP.Types.Method
-import           Network.HTTP.Types.Status ( statusCode )
 import           Network.HTTP.Simple
 
 data RateLimit = RateLimit {
@@ -40,8 +37,8 @@ post token url body = do
       }
   request $ urlEncodedBody body req
 
-request request = do
-  res <- httpJSON request
+request req = do
+  res <- httpJSON req
   let resHeaders = responseHeaders res
   let rateLimit = readRateLimit resHeaders
   return (rateLimit, getResponseBody res)
@@ -53,7 +50,7 @@ readRateLimit headers = do
   loo <- lookupInt' "X-RateLimit-Limit"
   rem <- lookupInt' "X-RateLimit-Remaining"
   res <- lookupInt' "X-RateLimit-Reset"
-  return $ RateLimit {
+  return RateLimit {
     limit = loo,
     remaining = rem,
     reset = res
