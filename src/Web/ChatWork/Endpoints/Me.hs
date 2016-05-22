@@ -2,8 +2,8 @@
 
 module Web.ChatWork.Endpoints.Me (
     endpoint
-    , Me
-  )where
+    , Me(..)
+  ) where
 
 import Data.Aeson
 import GHC.Generics

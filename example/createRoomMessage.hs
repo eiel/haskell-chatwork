@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import Web.ChatWork
+import Web.ChatWork.Endpoints.Me
 import Control.Monad.Trans.Maybe
 import Control.Monad.IO.Class
 
