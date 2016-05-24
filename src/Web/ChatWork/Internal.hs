@@ -4,12 +4,13 @@
 module Web.ChatWork.Internal (
   get,
   post,
-  RateLimit
+  RateLimit(..)
   ) where
 
 import           Data.ByteString.Char8 as BS
 import           Data.CaseInsensitive
 import qualified Data.Map as Map
+import           Data.UnixTime
 import           Network.HTTP.Client
 import           Network.HTTP.Types.Header
 import           Network.HTTP.Types.Method
@@ -18,7 +19,7 @@ import           Network.HTTP.Simple
 data RateLimit = RateLimit {
   limit :: Int,
   remaining :: Int,
-  reset :: Int -- TODO unix time
+  reset :: UnixTime
   } deriving (Show)
 
 get token url = do
@@ -48,12 +49,12 @@ header token = ("X-ChatWorkToken", token)
 readRateLimit :: RequestHeaders -> Maybe RateLimit
 readRateLimit headers = do
   loo <- lookupInt' "X-RateLimit-Limit"
-  rem <- lookupInt' "X-RateLimit-Remaining"
+  remain <- lookupInt' "X-RateLimit-Remaining"
   res <- lookupInt' "X-RateLimit-Reset"
   return RateLimit {
     limit = loo,
-    remaining = rem,
-    reset = res
+    remaining = remain,
+    reset = UnixTime (fromIntegral res) 0
   }
   where
     headerMap :: Map.Map (CI ByteString) ByteString

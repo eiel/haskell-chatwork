@@ -7,12 +7,11 @@ module Web.ChatWork (
   Me(..),
   createRoomMessage,
   CreateMessage(..),
-  RateLimit,
+  RateLimit(..),
   getChatWorkTokenFromEnv
   ) where
 
 import Data.ByteString.Char8 as BS
-import Data.Maybe
 import System.Environment ( lookupEnv )
 
 import Web.ChatWork.Internal
