@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module Web.ChatWork.Endpoints.My (
     statusEndpoint
@@ -6,8 +7,11 @@ module Web.ChatWork.Endpoints.My (
  ) where
 
 import Data.Aeson
+import Data.Aeson.Types
+import GHC.Generics
 
 import Web.ChatWork.Endpoints.Base
+import Web.ChatWork.Internal
 
 data MyStatus = MyStatus {
     unreadRoomNum :: Int
@@ -15,15 +19,12 @@ data MyStatus = MyStatus {
   , mytaskRoomNum :: Int
   , unreadNum :: Int
   , mytaskNum :: Int
-  } deriving (Show)
+  } deriving (Show, Generic)
 
 instance FromJSON MyStatus where
-  parseJSON (Object o) = MyStatus <$>
-    o .: "unread_room_num" <*>
-    o .: "mention_room_num" <*>
-    o .: "mytask_room_num" <*>
-    o .: "unread_num" <*>
-    o .: "mytask_num"
+  parseJSON = genericParseJSON $ defaultOptions {
+    fieldLabelModifier = fromField
+    }
 
 statusEndpoint :: String
 statusEndpoint = baseURL ++ "/my/status"

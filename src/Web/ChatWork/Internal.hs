@@ -4,6 +4,8 @@
 module Web.ChatWork.Internal (
   get,
   post,
+  toField,
+  fromField,
   RateLimit(..)
   ) where
 
@@ -15,6 +17,9 @@ import           Network.HTTP.Client
 import           Network.HTTP.Types.Header
 import           Network.HTTP.Types.Method
 import           Network.HTTP.Simple
+import           Data.List.Split
+import           Data.List as L
+import           Data.Char
 
 data RateLimit = RateLimit {
   limit :: Int,
@@ -65,3 +70,15 @@ readRateLimit headers = do
 
     lookupInt' :: CI ByteString -> Maybe Int
     lookupInt' = fmap (read . BS.unpack) . lookup'
+
+toField :: String -> String
+toField = L.intercalate "" . sndMap toCamel . splitOn "_"
+  where
+    sndMap :: (a -> a) -> [a] -> [a]
+    sndMap f (x:xs) = x : fmap f xs
+    toCamel :: String -> String
+    toCamel (x:xs) = toUpper x : xs
+
+-- レコード名からJSONのキー名に変更するのに利用
+fromField :: String -> String
+fromField = L.intercalate "_" . fmap (fmap toLower) . L.groupBy (\_ -> not . isUpper )
