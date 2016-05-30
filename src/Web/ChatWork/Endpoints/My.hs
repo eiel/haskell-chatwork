@@ -7,11 +7,10 @@ module Web.ChatWork.Endpoints.My (
  ) where
 
 import Data.Aeson
-import Data.Aeson.Types
 import GHC.Generics
 
 import Web.ChatWork.Endpoints.Base
-import Web.ChatWork.Internal
+import Web.ChatWork.Internal as I
 
 data MyStatus = MyStatus {
     unreadRoomNum :: Int
@@ -22,9 +21,7 @@ data MyStatus = MyStatus {
   } deriving (Show, Generic)
 
 instance FromJSON MyStatus where
-  parseJSON = genericParseJSON $ defaultOptions {
-    fieldLabelModifier = fromField
-    }
+  parseJSON = I.parseJSON
 
 statusEndpoint :: String
 statusEndpoint = baseURL ++ "/my/status"

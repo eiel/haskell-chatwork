@@ -24,7 +24,6 @@ library
                      , http-conduit
                      , http-types
                      , case-insensitive
-                     , split
                      , text
                      , transformers
                      , unix-time

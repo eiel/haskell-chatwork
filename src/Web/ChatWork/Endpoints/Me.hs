@@ -9,28 +9,30 @@ import Data.Aeson
 import GHC.Generics
 
 import Web.ChatWork.Endpoints.Base
+import Web.ChatWork.Internal as I
 
 data Me = Me {
-      account_id :: Int
-    , room_id :: Int
+      accountId :: Int
+    , roomId :: Int
     , name :: String
-    , chatwork_id :: String
-    , organization_id :: Int
-    , organization_name :: String
+    , chatworkId :: String
+    , organizationId :: Int
+    , organizationName :: String
     , department :: String
     , title :: String
     , url :: String
     , introduction :: String
     , mail :: String
-    , tel_organization :: String
-    , tel_extension :: String
-    , tel_mobile :: String
+    , telOrganization :: String
+    , telExtension :: String
+    , telMobile :: String
     , skype :: String
     , facebook :: String
     , twitter :: String
-    , avatar_image_url :: String
+    , avatarImageUrl :: String
     } deriving (Generic, Show)
 
-instance FromJSON Me
+instance FromJSON Me where
+  parseJSON = I.parseJSON
 
 endpoint = baseURL ++ "/me"

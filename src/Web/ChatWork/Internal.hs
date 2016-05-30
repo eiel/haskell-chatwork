@@ -1,14 +1,17 @@
 {-# OPTIONS -Wall #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE FlexibleContexts #-}
 
 module Web.ChatWork.Internal (
   get,
   post,
-  toField,
-  fromField,
+  parseJSON,
   RateLimit(..)
   ) where
 
+import           Data.Aeson hiding (parseJSON)
+import           Data.Aeson.Types hiding (parseJSON)
 import           Data.ByteString.Char8 as BS
 import           Data.CaseInsensitive
 import qualified Data.Map as Map
@@ -17,15 +20,14 @@ import           Network.HTTP.Client
 import           Network.HTTP.Types.Header
 import           Network.HTTP.Types.Method
 import           Network.HTTP.Simple
-import           Data.List.Split
-import           Data.List as L
-import           Data.Char
+import           GHC.Generics
 
 data RateLimit = RateLimit {
   limit :: Int,
   remaining :: Int,
   reset :: UnixTime
-  } deriving (Show)
+ } deriving (Show)
+
 
 get token url = do
   initRequest <- parseUrl url
@@ -71,14 +73,8 @@ readRateLimit headers = do
     lookupInt' :: CI ByteString -> Maybe Int
     lookupInt' = fmap (read . BS.unpack) . lookup'
 
-toField :: String -> String
-toField = L.intercalate "" . sndMap toCamel . splitOn "_"
-  where
-    sndMap :: (a -> a) -> [a] -> [a]
-    sndMap f (x:xs) = x : fmap f xs
-    toCamel :: String -> String
-    toCamel (x:xs) = toUpper x : xs
-
--- レコード名からJSONのキー名に変更するのに利用
-fromField :: String -> String
-fromField = L.intercalate "_" . fmap (fmap toLower) . L.groupBy (\_ -> not . isUpper )
+parseJSON
+  :: (Generic a, GFromJSON (Rep a)) => Value -> Parser a
+parseJSON = genericParseJSON defaultOptions {
+  fieldLabelModifier = camelTo2 '_'
+}

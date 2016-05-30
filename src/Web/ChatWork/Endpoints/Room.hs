@@ -13,12 +13,15 @@ import Data.Text.Encoding as E
 import GHC.Generics
 
 import Web.ChatWork.Endpoints.Base
-import Web.ChatWork.Internal
+import Web.ChatWork.Internal as I
 
 data MessageId = MessageId {
-    message_id :: Int
+    messageId :: Int
   } deriving (Show, Generic)
-instance FromJSON MessageId
+
+instance FromJSON MessageId where
+  parseJSON = I.parseJSON
+
 
 data CreateMessage = CreateMessage {
     body :: Text
@@ -31,5 +34,5 @@ createRoomMessage :: ByteString ->
 createRoomMessage token roomId request =
   post token (createMessageEndpoint roomId) [("body", E.encodeUtf8 $ body request)]
 
-createMessageEndpoint room_id =
-  baseURL ++ "/rooms/" ++ show room_id ++ "/messages"
+createMessageEndpoint roomId =
+  baseURL ++ "/rooms/" ++ show roomId ++ "/messages"
