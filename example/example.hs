@@ -19,6 +19,10 @@ myStatus = runMaybeT $ do
   (_, status) <- call API.myStatus
   return status
 
+myTasks = runMaybeT $ do
+  (_, tasks) <- call API.myTasks
+  return tasks
+
 call api = do
   token <- MaybeT API.getChatWorkTokenFromEnv
   liftIO . api $ token

@@ -8,6 +8,7 @@ module Web.ChatWork
   , Me(..)
   , myStatus
   , MyStatus(..)
+  , myTasks
   , createRoomMessage
   , CreateMessage(..)
   , RateLimit(..)
@@ -28,6 +29,10 @@ me token = get token Me.endpoint
 
 myStatus :: ByteString -> IO (ChatWorkAPI MyStatus)
 myStatus token = get token My.statusEndpoint
+
+myTasks ::
+  ByteString -> IO (ChatWorkAPI [Task])
+myTasks token = get token $ My.tasksEndpoint
 
 getChatWorkTokenFromEnv :: IO (Maybe ByteString)
 getChatWorkTokenFromEnv = fmap (fmap BS.pack) $ lookupEnv "CHATWORK_TOKEN"
