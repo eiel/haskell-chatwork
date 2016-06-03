@@ -30,6 +30,18 @@ instance FromJSON MyStatus where
 statusEndpoint :: String
 statusEndpoint = baseURL ++ "/my/status"
 
+data Status = Open | Done
+  deriving (Show, Generic)
+instance FromJSON Status where
+  parseJSON value = case value of
+    String "open" -> return Open
+    String "done" -> return Done
+
+instance ToJSON Status where
+  toJSON n = case n of
+    Open -> String "open"
+    Done -> String "done"
+
 data Task = Task {
     taskId :: Int
   , room :: TaskRoom
@@ -37,7 +49,7 @@ data Task = Task {
   , messageId :: Int
   , body :: String
   , limitTime :: Int
-  , status :: String
+  , status :: Status
   } deriving (Show, Generic)
 instance FromJSON Task where
   parseJSON = I.parseJSON
